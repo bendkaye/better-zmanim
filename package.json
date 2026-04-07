@@ -1,0 +1,21 @@
+{
+  "name": "better-zmanim",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "test:e2e": "turbo test:e2e",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "deploy": "turbo deploy"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.0",
+    "turbo": "^2.9.4",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.58.0"
+  }
+}

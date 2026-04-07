@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Better Zmanim",
+    "slug": "better-zmanim",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "scheme": "better-zmanim",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.betterzmanim.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1e3a5f"
+      },
+      "package": "com.betterzmanim.app"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

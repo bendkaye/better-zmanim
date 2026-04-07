@@ -1,0 +1,80 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(git diff *)", "Bash(git log *)", "Bash(git status *)",
+      "Bash(git add *)", "Bash(git commit *)", "Bash(git checkout -b *)",
+      "Bash(git branch *)", "Bash(git switch *)", "Bash(git stash *)",
+      "Bash(npx vitest *)", "Bash(npx playwright *)",
+      "Bash(npx tsc *)", "Bash(npx eslint *)", "Bash(npx prettier *)",
+      "Bash(npx wrangler *)", "Bash(npx expo *)", "Bash(npx eas *)",
+      "Bash(npx turbo *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push *)",
+      "Bash(git checkout main)", "Bash(git checkout develop)",
+      "Bash(git merge *)",
+      "Bash(curl *)", "Bash(wget *)"
+    ]
+  },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path'); npx prettier --write \"$FILE\" 2>/dev/null; exit 0"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path'); if echo \"$FILE\" | grep -qE '\\.(ts|tsx)$'; then npx tsc --noEmit --skipLibCheck 2>&1 | head -20; fi; exit 0"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path'); if echo \"$FILE\" | grep -qE '\\.(ts|tsx)$'; then npx eslint \"$FILE\" --max-warnings 0 2>&1 | tail -10; fi; exit 0"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CMD=$(cat | jq -r '.tool_input.command'); if echo \"$CMD\" | grep -qiE '(rm -rf /|git push.*force|git checkout (main|develop)$)'; then echo 'BLOCKED' >&2; exit 2; fi; exit 0"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"Branch: $(git branch --show-current 2>/dev/null || echo 'N/A')\nLast 5 commits:\n$(git log --oneline -5 2>/dev/null || echo 'N/A')\nUncommitted: $(git status --short 2>/dev/null | wc -l) files\""
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "github@claude-plugins-official": true,
+    "context7@claude-plugins-official": true
+  }
+}
