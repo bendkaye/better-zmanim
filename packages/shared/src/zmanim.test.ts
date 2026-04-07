@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { ZMAN_CATEGORIES, ZMANIM } from "./zmanim";
-import type { ZmanId, ZmanCategory } from "./zmanim";
+import type { ZmanId } from "./zmanim";
 
 describe("ZMAN_CATEGORIES", () => {
   it("has exactly 8 categories", () => {

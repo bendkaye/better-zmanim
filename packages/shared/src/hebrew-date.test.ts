@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { HEBREW_MONTHS } from "./hebrew-date";
-import type { HebrewMonth, HebrewDate, Parsha } from "./hebrew-date";
+import type { HebrewDate, Parsha } from "./hebrew-date";
 
 describe("HEBREW_MONTHS", () => {
   it("has exactly 13 months (including Adar II)", () => {

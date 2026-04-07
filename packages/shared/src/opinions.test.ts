@@ -5,7 +5,6 @@ import {
   buildDefaultPrimaryOpinions,
 } from "./opinions";
 import { ZMANIM } from "./zmanim";
-import type { ZmanimPreferences } from "./opinions";
 import type { ZmanId } from "./zmanim";
 
 describe("buildDefaultVisibleOpinions", () => {

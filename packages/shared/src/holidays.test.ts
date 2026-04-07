@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { HOLIDAY_CATEGORIES } from "./holidays";
-import type { HolidayCategory, HolidayInfo, DayInfo } from "./holidays";
+import type { HolidayInfo, DayInfo } from "./holidays";
 
 describe("HOLIDAY_CATEGORIES", () => {
   it("has exactly 6 categories", () => {
