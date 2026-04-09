@@ -47,3 +47,4 @@ export {
 } from "./formatting";
 export { createApiClient } from "./api-client";
 export { buildDayInfo } from "./day-info";
+export { useZmanim, useHebrewDate, useCountdown } from "./hooks";
