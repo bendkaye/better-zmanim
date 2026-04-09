@@ -1,62 +1,58 @@
+// apps/api/src/lib/compute.ts
 import { ComplexZmanimCalendar, GeoLocation } from "kosher-zmanim";
 import momentTimezone from "moment-timezone";
+import { ZMANIM } from "@better-zmanim/shared";
+import type { ZmanId, ZmanTimeResult } from "@better-zmanim/shared";
 
-export interface ComputeZmanimInput {
+export interface ComputeInput {
   latitude: number;
   longitude: number;
   date: Date;
   elevation?: number;
+  timeZone?: string;
+  candleLightingOffset?: number;
 }
 
-export interface ZmanimResult {
-  alos: string | null;
-  misheyakir: string | null;
-  hanetz: string | null;
-  sofZmanShmaGra: string | null;
-  sofZmanShmaMga: string | null;
-  sofZmanTefilaGra: string | null;
-  sofZmanTefilaMga: string | null;
-  chatzos: string | null;
-  minchaGedola: string | null;
-  minchaKetana: string | null;
-  plagHamincha: string | null;
-  shkia: string | null;
-  tzeisGeonim: string | null;
-  tzeis72: string | null;
-}
-
-function formatTime(date: Date | null): string | null {
-  if (!date) return null;
-  return date.toISOString();
-}
-
-export function computeZmanim(input: ComputeZmanimInput): ZmanimResult {
-  const { latitude, longitude, date, elevation } = input;
+export function computeAllZmanim(input: ComputeInput): ZmanTimeResult[] {
+  const {
+    latitude,
+    longitude,
+    date,
+    elevation,
+    timeZone,
+    candleLightingOffset,
+  } = input;
 
   const geoLocation = new GeoLocation(
     "location",
     latitude,
     longitude,
     elevation ?? 0,
+    timeZone ?? "UTC",
   );
 
   const calendar = new ComplexZmanimCalendar(geoLocation);
   calendar.setMoment(momentTimezone(date));
+  calendar.setCandleLightingOffset(candleLightingOffset ?? 18);
 
-  return {
-    alos: formatTime(calendar.getAlos72()),
-    misheyakir: formatTime(calendar.getMisheyakir10Point2Degrees()),
-    hanetz: formatTime(calendar.getSunrise()),
-    sofZmanShmaGra: formatTime(calendar.getSofZmanShmaGRA()),
-    sofZmanShmaMga: formatTime(calendar.getSofZmanShmaMGA()),
-    sofZmanTefilaGra: formatTime(calendar.getSofZmanTfilaGRA()),
-    sofZmanTefilaMga: formatTime(calendar.getSofZmanTfilaMGA()),
-    chatzos: formatTime(calendar.getChatzos()),
-    minchaGedola: formatTime(calendar.getMinchaGedola()),
-    minchaKetana: formatTime(calendar.getMinchaKetana()),
-    plagHamincha: formatTime(calendar.getPlagHamincha()),
-    shkia: formatTime(calendar.getSunset()),
-    tzeisGeonim: formatTime(calendar.getTzaisGeonim8Point5Degrees()),
-    tzeis72: formatTime(calendar.getTzais72()),
-  };
+  const results: ZmanTimeResult[] = [];
+
+  for (const zmanId of Object.keys(ZMANIM) as ZmanId[]) {
+    const zman = ZMANIM[zmanId];
+    for (const [opinionId, opinion] of Object.entries(zman.opinions)) {
+      const methodName = (opinion as { kosherZmanimMethod: string })
+        .kosherZmanimMethod;
+      const method = calendar[methodName as keyof ComplexZmanimCalendar];
+
+      let time: string | null = null;
+      if (typeof method === "function") {
+        const result = (method as () => Date | null).call(calendar);
+        time = result ? result.toISOString() : null;
+      }
+
+      results.push({ zmanId, opinionId, time });
+    }
+  }
+
+  return results;
 }
