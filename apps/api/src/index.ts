@@ -31,7 +31,10 @@ app.get("/api/health", (c) => {
 });
 
 app.notFound((c) => {
-  return c.json({ data: null, error: "Not found" }, 404);
+  return c.json(
+    { data: null, error: { code: "NOT_FOUND", message: "Not found" } },
+    404,
+  );
 });
 
 export default app;
