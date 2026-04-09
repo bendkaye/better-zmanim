@@ -108,7 +108,7 @@ describe("GET /api/geocode", () => {
     const app = createTestApp(kv);
     await app.request("/api/geocode?q=New+York");
     expect(kv.put).toHaveBeenCalledTimes(1);
-    expect(kv.put.mock.calls[0][0]).toBe("geocode:new york");
+    expect(kv.put.mock.calls[0]?.[0]).toBe("geocode:new york");
   });
 
   it("returns 502 when Nominatim returns error", async () => {
