@@ -46,3 +46,4 @@ export {
   formatOmerCount,
 } from "./formatting";
 export { createApiClient } from "./api-client";
+export { buildDayInfo } from "./day-info";
