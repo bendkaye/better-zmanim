@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { zmanimRoutes } from "./routes/zmanim";
+import { hebdateRoutes } from "./routes/hebdate";
 import { logger } from "./lib/logger";
 
 export type Env = {
@@ -25,6 +26,7 @@ app.use("*", async (c, next) => {
 });
 
 app.route("/api/zmanim", zmanimRoutes);
+app.route("/api/hebdate", hebdateRoutes);
 
 app.get("/api/health", (c) => {
   return c.json({ data: { status: "ok" }, error: null });
