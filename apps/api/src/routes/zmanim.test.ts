@@ -3,7 +3,10 @@ import { describe, it, expect } from "vitest";
 import app from "../index";
 
 describe("GET /api/zmanim", () => {
-  async function request(query: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test helper
+  async function request(
+    query: string,
+  ): Promise<{ status: number; body: any }> {
     const res = await app.request(`/api/zmanim?${query}`);
     const body = await res.json();
     return { status: res.status, body };
