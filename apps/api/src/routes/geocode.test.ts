@@ -7,7 +7,7 @@ function createMockKV() {
   const store = new Map<string, string>();
   return {
     get: vi.fn(async (key: string) =>
-      store.get(key) ? JSON.parse(store.get(key)!) : null,
+      store.get(key) ? JSON.parse(store.get(key) ?? "") : null,
     ),
     put: vi.fn(async (key: string, value: string) => {
       store.set(key, value);
@@ -27,7 +27,7 @@ function createTestApp(kv: ReturnType<typeof createMockKV>) {
     c.env = {
       GEOCODE_CACHE: kv as unknown as KVNamespace,
       ENVIRONMENT: "test",
-    } as any;
+    } as unknown as typeof c.env;
     await next();
   });
   app.route("/api/geocode", geocodeRoutes);
@@ -47,6 +47,7 @@ describe("GET /api/geocode", () => {
     const app = createTestApp(kv);
     const res = await app.request("/api/geocode");
     expect(res.status).toBe(400);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test assertion
     const body = (await res.json()) as any;
     expect(body.error.code).toBe("GEOCODE_FAILED");
   });
@@ -68,6 +69,7 @@ describe("GET /api/geocode", () => {
     const app = createTestApp(kv);
     const res = await app.request("/api/geocode?q=Jerusalem");
     expect(res.status).toBe(200);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test assertion
     const body = (await res.json()) as any;
     expect(body.data.results).toEqual(cached);
     expect(mockFetch).not.toHaveBeenCalled();
@@ -87,6 +89,7 @@ describe("GET /api/geocode", () => {
     const app = createTestApp(kv);
     const res = await app.request("/api/geocode?q=Jerusalem");
     expect(res.status).toBe(200);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test assertion
     const body = (await res.json()) as any;
     expect(body.data.results).toHaveLength(1);
     expect(body.data.results[0].lat).toBe(31.7683);

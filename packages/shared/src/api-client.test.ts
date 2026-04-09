@@ -20,7 +20,7 @@ describe("createApiClient", () => {
 
       await client.getZmanim({ lat: 40.71, lng: -74.01 });
 
-      const calledUrl = mockFetch.mock.calls[0]![0] as string;
+      const calledUrl = mockFetch.mock.calls[0]?.[0] as string;
       expect(calledUrl).toContain("https://api.example.com/api/zmanim?");
       expect(calledUrl).toContain("lat=40.71");
       expect(calledUrl).toContain("lng=-74.01");
@@ -39,7 +39,7 @@ describe("createApiClient", () => {
         elevation: 800,
       });
 
-      const calledUrl = mockFetch.mock.calls[0]![0] as string;
+      const calledUrl = mockFetch.mock.calls[0]?.[0] as string;
       expect(calledUrl).toContain("date=2026-04-07");
       expect(calledUrl).toContain("elevation=800");
     });
@@ -54,7 +54,7 @@ describe("createApiClient", () => {
 
       await client.getGeocode({ q: "Jerusalem" });
 
-      const calledUrl = mockFetch.mock.calls[0]![0] as string;
+      const calledUrl = mockFetch.mock.calls[0]?.[0] as string;
       expect(calledUrl).toBe("https://api.example.com/api/geocode?q=Jerusalem");
     });
 
@@ -66,7 +66,7 @@ describe("createApiClient", () => {
 
       await client.getGeocode({ q: "New York, NY" });
 
-      const calledUrl = mockFetch.mock.calls[0]![0] as string;
+      const calledUrl = mockFetch.mock.calls[0]?.[0] as string;
       expect(calledUrl).toContain("q=New+York");
     });
   });
@@ -80,7 +80,7 @@ describe("createApiClient", () => {
 
       await client.getHebDate({});
 
-      const calledUrl = mockFetch.mock.calls[0]![0] as string;
+      const calledUrl = mockFetch.mock.calls[0]?.[0] as string;
       expect(calledUrl).toBe("https://api.example.com/api/hebdate");
     });
 
@@ -92,7 +92,7 @@ describe("createApiClient", () => {
 
       await client.getHebDate({ date: "2026-04-07" });
 
-      const calledUrl = mockFetch.mock.calls[0]![0] as string;
+      const calledUrl = mockFetch.mock.calls[0]?.[0] as string;
       expect(calledUrl).toBe(
         "https://api.example.com/api/hebdate?date=2026-04-07",
       );
