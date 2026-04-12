@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import app from "../index";
 
 describe("GET /api/hebdate", () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test helper
   async function request(
     query: string = "",
-  ): Promise<{ status: number; body: any }> {
+  ): // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test helper
+  Promise<{ status: number; body: any }> {
     const url = query ? `/api/hebdate?${query}` : "/api/hebdate";
     const res = await app.request(url);
     const body = await res.json();

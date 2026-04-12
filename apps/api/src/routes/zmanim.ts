@@ -64,12 +64,12 @@ zmanimRoutes.get("/", async (c) => {
     );
   }
 
-  const elevation = c.req.query("elevation")
-    ? parseFloat(c.req.query("elevation")!)
-    : undefined;
+  const elevationParam = c.req.query("elevation");
+  const elevation = elevationParam ? parseFloat(elevationParam) : undefined;
   const tz = c.req.query("tz") ?? "UTC";
-  const candleLightingOffset = c.req.query("candleLightingOffset")
-    ? parseInt(c.req.query("candleLightingOffset")!, 10)
+  const candleLightingParam = c.req.query("candleLightingOffset");
+  const candleLightingOffset = candleLightingParam
+    ? parseInt(candleLightingParam, 10)
     : 18;
 
   try {
@@ -92,7 +92,7 @@ zmanimRoutes.get("/", async (c) => {
         name: "",
         timeZone: tz,
       },
-      date: date.toISOString().split("T")[0]!,
+      date: date.toISOString().split("T")[0] ?? "",
       dayInfo,
       zmanim,
     };
