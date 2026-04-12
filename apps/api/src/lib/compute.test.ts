@@ -73,8 +73,10 @@ describe("computeAllZmanim", () => {
     const sunset = results.find(
       (r) => r.zmanId === "shkia" && r.opinionId === "standard",
     );
-    expect(new Date(sunrise!.time!).getTime()).toBeLessThan(
-      new Date(sunset!.time!).getTime(),
+    expect(sunrise).toBeDefined();
+    expect(sunset).toBeDefined();
+    expect(new Date(sunrise?.time ?? "").getTime()).toBeLessThan(
+      new Date(sunset?.time ?? "").getTime(),
     );
   });
 
@@ -103,8 +105,10 @@ describe("computeAllZmanim", () => {
       (r) => r.zmanId === "candleLighting" && r.opinionId === "standard",
     );
     // 40 min offset should be earlier than 18 min offset
-    expect(new Date(cl40!.time!).getTime()).toBeLessThan(
-      new Date(cl18!.time!).getTime(),
+    expect(cl40).toBeDefined();
+    expect(cl18).toBeDefined();
+    expect(new Date(cl40?.time ?? "").getTime()).toBeLessThan(
+      new Date(cl18?.time ?? "").getTime(),
     );
   });
 });

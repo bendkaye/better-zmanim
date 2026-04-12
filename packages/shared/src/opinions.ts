@@ -34,7 +34,7 @@ export function buildDefaultPrimaryOpinions(): Record<ZmanId, string> {
     const firstVisible = opinions.find(
       ([_, op]) => (op as { defaultVisible: boolean }).defaultVisible,
     );
-    primary[zmanId] = firstVisible ? firstVisible[0] : opinions[0]![0];
+    primary[zmanId] = firstVisible ? firstVisible[0] : (opinions[0]?.[0] ?? "");
   }
   return primary;
 }
