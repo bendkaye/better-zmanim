@@ -34,7 +34,7 @@ jobs:
         with: { node-version: "22", cache: "pnpm" }
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @better-zmanim/web build
-      - name: Deploy to Cloudflare Pages
-        run: cd apps/web && npx wrangler pages deploy dist/ --project-name better-zmanim
+      - name: Deploy to Cloudflare Workers
+        run: cd apps/web && npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
