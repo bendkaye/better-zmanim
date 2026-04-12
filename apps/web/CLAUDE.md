@@ -1,6 +1,6 @@
 # Web Frontend Rules
 
-## This is the React PWA (Cloudflare Pages)
+## This is the React PWA (Cloudflare Workers Static Assets)
 - Uses React 19 + Vite + Tailwind CSS v4
 - PWA via vite-plugin-pwa (Workbox)
 - All shared hooks imported from @better-zmanim/shared
