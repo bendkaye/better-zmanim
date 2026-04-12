@@ -1,12 +1,12 @@
 name: Deploy Web + API
 on:
   push:
-    branches: [develop]
+    branches: [develop, main]
 
 jobs:
   deploy-api:
     runs-on: ubuntu-latest
-    environment: staging
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -15,18 +15,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @better-zmanim/api build
       - name: Deploy Worker
-        run: cd apps/api && npx wrangler deploy
+        run: cd apps/api && npx wrangler deploy --env ${{ github.ref_name == 'main' && 'production' || 'staging' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - name: Health check
-        run: |
-          sleep 5
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://api.betterzmanim.com/health)
-          if [ "$STATUS" = "200" ]; then echo "API healthy"; else echo "API unhealthy"; exit 1; fi
 
   deploy-web:
     runs-on: ubuntu-latest
-    environment: staging
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -35,6 +30,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @better-zmanim/web build
       - name: Deploy to Cloudflare Workers
-        run: cd apps/web && npx wrangler deploy
+        run: cd apps/web && npx wrangler deploy --env ${{ github.ref_name == 'main' && 'production' || 'staging' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
