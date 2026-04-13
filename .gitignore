@@ -11,6 +11,10 @@ build/
 
 # React Router
 .react-router/
+apps/web/.react-router/
+
+# Build outputs (web)
+apps/web/build/
 
 # Cloudflare
 .wrangler/
@@ -47,3 +51,6 @@ playwright-report/
 
 # PWA generated
 dev-dist/
+
+# Superpowers brainstorm sessions
+.superpowers/
