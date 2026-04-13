@@ -1,6 +1,6 @@
 name = "better-zmanim-web"
 compatibility_date = "2025-04-01"
-main = "./build/server/index.js"
+main = "./workers/app.ts"
 assets = { directory = "./build/client" }
 
 [[services]]
