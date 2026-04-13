@@ -44,12 +44,13 @@ export function InfiniteScroll({
   const fetcher = useFetcher<{ zmanimResponse: ZmanimResponse }>();
 
   useEffect(() => {
-    if (fetcher.data?.zmanimResponse && fetcher.state === "idle" && isLoading) {
+    const zmanimResponse = fetcher.data?.zmanimResponse;
+    if (zmanimResponse && fetcher.state === "idle" && isLoading) {
       setFutureDays((prev) => [
         ...prev,
         {
           date: addDays(nextDate, -1),
-          zmanimResponse: fetcher.data!.zmanimResponse,
+          zmanimResponse,
         },
       ]);
       setNextDate((prev) => addDays(prev, 1));

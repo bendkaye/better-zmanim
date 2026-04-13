@@ -16,12 +16,15 @@ describe("groupZmanimByCategory", () => {
   it("groups zmanim into display categories", () => {
     const groups = groupZmanimByCategory(SAMPLE_ZMANIM);
     expect(groups).toHaveLength(3);
+    /* eslint-disable @typescript-eslint/no-non-null-assertion */
     expect(groups[0]!.label).toBe("morning");
     expect(groups[1]!.label).toBe("afternoon");
     expect(groups[2]!.label).toBe("evening");
+    /* eslint-enable @typescript-eslint/no-non-null-assertion */
   });
   it("places each zman in the correct group", () => {
     const groups = groupZmanimByCategory(SAMPLE_ZMANIM);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const morningIds = groups[0]!.zmanim.map((z) => z.zmanId);
     expect(morningIds).toContain("alos");
     expect(morningIds).toContain("hanetz");
