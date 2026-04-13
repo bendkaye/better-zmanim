@@ -4,9 +4,13 @@ node_modules/
 
 # Build outputs
 dist/
+build/
 .turbo/
 .output/
 *.tsbuildinfo
+
+# React Router
+.react-router/
 
 # Cloudflare
 .wrangler/
