@@ -1,20 +1,4 @@
-const POPULAR_SLUGS = [
-  "jerusalem",
-  "new-york",
-  "los-angeles",
-  "london",
-  "tel-aviv-yafo",
-  "chicago",
-  "miami",
-  "toronto",
-  "lakewood",
-  "brooklyn",
-  "baltimore",
-  "detroit",
-  "monsey",
-  "passaic",
-  "teaneck",
-];
+import { POPULAR_SLUGS } from "../lib/popular-locations";
 
 export function loader() {
   const baseUrl = "https://better-zmanim.com";

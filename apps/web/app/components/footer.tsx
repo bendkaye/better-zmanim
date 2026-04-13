@@ -1,21 +1,11 @@
 import { Link } from "react-router";
 import type { Language } from "@better-zmanim/shared";
+import { POPULAR_LOCATIONS } from "../lib/popular-locations";
 
 interface FooterProps {
   lang: Language;
   currentSlug?: string;
 }
-
-const POPULAR_LOCATIONS = [
-  { slug: "jerusalem-israel", en: "Jerusalem", he: "ירושלים" },
-  { slug: "new-york-ny", en: "New York", he: "ניו יורק" },
-  { slug: "los-angeles-ca", en: "Los Angeles", he: "לוס אנג'לס" },
-  { slug: "london-uk", en: "London", he: "לונדון" },
-  { slug: "tel-aviv-israel", en: "Tel Aviv", he: "תל אביב" },
-  { slug: "chicago-il", en: "Chicago", he: "שיקגו" },
-  { slug: "miami-fl", en: "Miami", he: "מיאמי" },
-  { slug: "toronto-canada", en: "Toronto", he: "טורונטו" },
-];
 
 export function Footer({ lang, currentSlug }: FooterProps) {
   const locations = POPULAR_LOCATIONS.filter((l) => l.slug !== currentSlug);

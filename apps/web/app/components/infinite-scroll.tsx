@@ -6,7 +6,9 @@ import { ZmanimDay } from "./zmanim-day";
 
 interface InfiniteScrollProps {
   initialDate: string;
-  slug: string;
+  lat: number;
+  lng: number;
+  tz: string;
   lang: Language;
 }
 
@@ -21,7 +23,7 @@ function addDays(dateStr: string, n: number): string {
   return date.toISOString().slice(0, 10);
 }
 
-function formatGregorianDate(dateStr: string, lang: Language): string {
+function formatDayDate(dateStr: string, lang: Language): string {
   const date = new Date(dateStr + "T00:00:00");
   const locale = lang === "he" ? "he-IL" : "en-US";
   return date.toLocaleDateString(locale, {
@@ -33,7 +35,9 @@ function formatGregorianDate(dateStr: string, lang: Language): string {
 
 export function InfiniteScroll({
   initialDate,
-  slug,
+  lat,
+  lng,
+  tz,
   lang,
 }: InfiniteScrollProps) {
   const [futureDays, setFutureDays] = useState<FutureDay[]>([]);
@@ -61,8 +65,10 @@ export function InfiniteScroll({
   const loadNext = useCallback(() => {
     if (fetcher.state !== "idle" || isLoading) return;
     setIsLoading(true);
-    fetcher.load(`/location/${slug}?date=${nextDate}&_data=true`);
-  }, [fetcher, slug, nextDate, isLoading]);
+    fetcher.load(
+      `/api/zmanim?lat=${lat}&lng=${lng}&tz=${encodeURIComponent(tz)}&date=${nextDate}`,
+    );
+  }, [fetcher, lat, lng, tz, nextDate, isLoading]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -89,7 +95,7 @@ export function InfiniteScroll({
           <div key={day.date}>
             <DayDivider
               dayInfo={day.zmanimResponse.dayInfo}
-              gregorianDate={formatGregorianDate(day.date, lang)}
+              gregorianDate={formatDayDate(day.date, lang)}
               lang={lang}
               variant={variant}
             />

@@ -5,6 +5,7 @@ import type { Language, ZmanimResponse } from "@better-zmanim/shared";
 import { fetchGeocode, fetchZmanim } from "../lib/api.server";
 import { parseCookies } from "../lib/cookies";
 import { fromSlug } from "../lib/slug";
+import { formatGregorianDate } from "../lib/date-helpers";
 import { findNextZman } from "../lib/zmanim-helpers";
 import { buildMeta, buildJsonLd } from "../components/seo-meta";
 import { Nav } from "../components/nav";
@@ -13,17 +14,6 @@ import { ZmanimDay } from "../components/zmanim-day";
 import { InfiniteScroll } from "../components/infinite-scroll";
 import { SearchModal } from "../components/search-modal";
 import { Footer } from "../components/footer";
-
-function formatGregorianDate(dateStr: string, lang: Language): string {
-  const date = new Date(dateStr + "T00:00:00");
-  const locale = lang === "he" ? "he-IL" : "en-US";
-  return date.toLocaleDateString(locale, {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 export async function loader({ params, request, context }: Route.LoaderArgs) {
   const slug = params.slug;
@@ -44,7 +34,6 @@ export async function loader({ params, request, context }: Route.LoaderArgs) {
 
   const url = new URL(request.url);
   const dateParam = url.searchParams.get("date") ?? undefined;
-  const isDataRequest = url.searchParams.has("_data");
 
   const zmanimResult = await fetchZmanim(api, {
     lat: location.lat,
@@ -58,17 +47,15 @@ export async function loader({ params, request, context }: Route.LoaderArgs) {
   }
 
   const zmanimResponse = zmanimResult.data;
-
-  if (isDataRequest) {
-    return data({ zmanimResponse });
-  }
-
   const gregorianDate = formatGregorianDate(zmanimResponse.date, lang);
 
   return data({
     slug,
     locationName: location.name,
     lang,
+    lat: location.lat,
+    lng: location.lng,
+    tz: location.timeZone,
     gregorianDate,
     zmanimResponse,
   });
@@ -87,15 +74,14 @@ export function meta({ data: loaderData }: Route.MetaArgs) {
 export default function Location({ loaderData }: Route.ComponentProps) {
   const [searchOpen, setSearchOpen] = useState(false);
 
-  if (!("locationName" in loaderData)) {
-    return null;
-  }
-
-  const { slug, locationName, lang, gregorianDate, zmanimResponse } =
+  const { slug, locationName, lang, lat, lng, tz, gregorianDate, zmanimResponse } =
     loaderData as {
       slug: string;
       locationName: string;
       lang: Language;
+      lat: number;
+      lng: number;
+      tz: string;
       gregorianDate: string;
       zmanimResponse: ZmanimResponse;
     };
@@ -130,7 +116,9 @@ export default function Location({ loaderData }: Route.ComponentProps) {
         />
         <InfiniteScroll
           initialDate={zmanimResponse.date}
-          slug={slug}
+          lat={lat}
+          lng={lng}
+          tz={tz}
           lang={lang}
         />
       </main>
@@ -139,7 +127,6 @@ export default function Location({ loaderData }: Route.ComponentProps) {
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}
         lang={lang}
-        apiBaseUrl="/api"
       />
     </>
   );

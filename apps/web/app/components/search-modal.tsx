@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
-import { createApiClient } from "@better-zmanim/shared";
+import { useFetcher, useNavigate } from "react-router";
 import type { Language, Location } from "@better-zmanim/shared";
 import { toSlug } from "../lib/slug";
 import { serializeCookie } from "../lib/cookies";
@@ -9,32 +8,29 @@ interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   lang: Language;
-  apiBaseUrl: string;
 }
 
 export function SearchModal({
   isOpen,
   onClose,
   lang,
-  apiBaseUrl,
 }: SearchModalProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Location[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
+  const fetcher = useFetcher<{ results: Location[] }>();
 
-  const api = createApiClient({ baseUrl: apiBaseUrl });
+  const results = fetcher.data?.results ?? [];
+  const isSearching = fetcher.state === "loading";
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50);
     } else {
       setQuery("");
-      setResults([]);
     }
   }, [isOpen]);
 
@@ -44,20 +40,16 @@ export function SearchModal({
       if (debounceRef.current) clearTimeout(debounceRef.current);
 
       if (value.trim().length < 2) {
-        setResults([]);
         return;
       }
 
-      debounceRef.current = setTimeout(async () => {
-        setIsSearching(true);
-        const response = await api.getGeocode({ q: value.trim() });
-        if (response.data) {
-          setResults(response.data.results);
-        }
-        setIsSearching(false);
+      debounceRef.current = setTimeout(() => {
+        fetcher.load(
+          `/api/geocode?q=${encodeURIComponent(value.trim())}`,
+        );
       }, 300);
     },
-    [api],
+    [fetcher],
   );
 
   const handleSelect = useCallback(
@@ -78,21 +70,27 @@ export function SearchModal({
 
     setGeoLoading(true);
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const response = await api.getGeocode({
-          q: `${position.coords.latitude},${position.coords.longitude}`,
-        });
-        const firstResult = response.data?.results[0];
-        if (firstResult) {
-          handleSelect(firstResult);
-        }
+      (position) => {
+        fetcher.load(
+          `/api/geocode?q=${encodeURIComponent(`${position.coords.latitude},${position.coords.longitude}`)}`,
+        );
         setGeoLoading(false);
       },
       () => {
         setGeoLoading(false);
       },
     );
-  }, [api, handleSelect]);
+  }, [fetcher]);
+
+  // Auto-select first result from geolocation reverse geocode
+  useEffect(() => {
+    if (geoLoading === false && !query && results.length > 0) {
+      const firstResult = results[0];
+      if (firstResult) {
+        handleSelect(firstResult);
+      }
+    }
+  }, [results, geoLoading, query, handleSelect]);
 
   const handleOverlayClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {

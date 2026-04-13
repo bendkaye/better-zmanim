@@ -4,6 +4,7 @@ import type { Route } from "./+types/home";
 import type { Language, ZmanimResponse } from "@better-zmanim/shared";
 import { fetchZmanim } from "../lib/api.server";
 import { parseCookies } from "../lib/cookies";
+import { formatGregorianDate } from "../lib/date-helpers";
 import { findNextZman } from "../lib/zmanim-helpers";
 import { buildMeta, buildJsonLd } from "../components/seo-meta";
 import { Nav } from "../components/nav";
@@ -12,17 +13,6 @@ import { ZmanimDay } from "../components/zmanim-day";
 import { InfiniteScroll } from "../components/infinite-scroll";
 import { SearchModal } from "../components/search-modal";
 import { Footer } from "../components/footer";
-
-function formatGregorianDate(dateStr: string, lang: Language): string {
-  const date = new Date(dateStr + "T00:00:00");
-  const locale = lang === "he" ? "he-IL" : "en-US";
-  return date.toLocaleDateString(locale, {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 interface CfProperties {
   latitude?: string;
@@ -47,7 +37,6 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 
   const url = new URL(request.url);
   const dateParam = url.searchParams.get("date") ?? undefined;
-  const isDataRequest = url.searchParams.has("_data");
 
   const zmanimResult = await fetchZmanim(api, {
     lat,
@@ -61,16 +50,14 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   }
 
   const zmanimResponse = zmanimResult.data;
-
-  if (isDataRequest) {
-    return data({ zmanimResponse });
-  }
-
   const gregorianDate = formatGregorianDate(zmanimResponse.date, lang);
 
   return data({
     locationName: city,
     lang,
+    lat,
+    lng,
+    tz,
     gregorianDate,
     zmanimResponse,
   });
@@ -88,16 +75,16 @@ export function meta({ data: loaderData }: Route.MetaArgs) {
 export default function Home({ loaderData }: Route.ComponentProps) {
   const [searchOpen, setSearchOpen] = useState(false);
 
-  if (!("locationName" in loaderData)) {
-    return null;
-  }
-
-  const { locationName, lang, gregorianDate, zmanimResponse } = loaderData as {
-    locationName: string;
-    lang: Language;
-    gregorianDate: string;
-    zmanimResponse: ZmanimResponse;
-  };
+  const { locationName, lang, lat, lng, tz, gregorianDate, zmanimResponse } =
+    loaderData as {
+      locationName: string;
+      lang: Language;
+      lat: number;
+      lng: number;
+      tz: string;
+      gregorianDate: string;
+      zmanimResponse: ZmanimResponse;
+    };
 
   const nextZman = findNextZman(zmanimResponse.zmanim, new Date());
   const jsonLd = buildJsonLd({ locationName, slug: "", zmanimResponse });
@@ -129,7 +116,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         />
         <InfiniteScroll
           initialDate={zmanimResponse.date}
-          slug="_home"
+          lat={lat}
+          lng={lng}
+          tz={tz}
           lang={lang}
         />
       </main>
@@ -138,7 +127,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}
         lang={lang}
-        apiBaseUrl="/api"
       />
     </>
   );
