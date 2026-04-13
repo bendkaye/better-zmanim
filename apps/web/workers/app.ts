@@ -3,7 +3,10 @@ import { createRequestHandler } from "@react-router/cloudflare";
 // @ts-ignore - server build is generated at build time
 import * as build from "../build/server/index.js";
 
-const requestHandler = createRequestHandler(build, "production");
+const requestHandler = createRequestHandler({
+  build,
+  mode: "production",
+});
 
 export default {
   async fetch(request, env, ctx) {
@@ -15,7 +18,9 @@ export default {
         waitUntil: ctx.waitUntil.bind(ctx),
         passThroughOnException: ctx.passThroughOnException.bind(ctx),
       });
-    } catch {
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Worker error:", error);
       return new Response("Internal Server Error", { status: 500 });
     }
   },
