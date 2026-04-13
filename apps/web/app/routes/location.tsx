@@ -27,7 +27,8 @@ function formatGregorianDate(dateStr: string, lang: Language): string {
 
 export async function loader({ params, request, context }: Route.LoaderArgs) {
   const slug = params.slug;
-  const api = (context.cloudflare.env as { API: Fetcher }).API;
+  const cf = context.cloudflare as { env: { API: Fetcher } };
+  const api = cf.env.API;
 
   const cookieHeader = request.headers.get("Cookie") ?? "";
   const cookies = parseCookies(cookieHeader);

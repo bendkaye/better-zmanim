@@ -32,17 +32,18 @@ interface CfProperties {
 }
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-  const api = (context.cloudflare.env as { API: Fetcher }).API;
+  const cloudflare = context.cloudflare as { env: { API: Fetcher } };
+  const api = cloudflare.env.API;
 
   const cookieHeader = request.headers.get("Cookie") ?? "";
   const cookies = parseCookies(cookieHeader);
   const lang = (cookies.lang ?? "en") as Language;
 
-  const cf = (request as unknown as { cf?: CfProperties }).cf ?? {};
-  const lat = cf.latitude ? parseFloat(cf.latitude) : 40.7128;
-  const lng = cf.longitude ? parseFloat(cf.longitude) : -74.006;
-  const city = cf.city ?? "New York";
-  const tz = cf.timezone ?? "America/New_York";
+  const cfProps = (request as unknown as { cf?: CfProperties }).cf ?? {};
+  const lat = cfProps.latitude ? parseFloat(cfProps.latitude) : 40.7128;
+  const lng = cfProps.longitude ? parseFloat(cfProps.longitude) : -74.006;
+  const city = cfProps.city ?? "New York";
+  const tz = cfProps.timezone ?? "America/New_York";
 
   const url = new URL(request.url);
   const dateParam = url.searchParams.get("date") ?? undefined;
