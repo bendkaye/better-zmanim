@@ -1,0 +1,20 @@
+name = "better-zmanim-web"
+compatibility_date = "2025-04-01"
+main = "./workers/app.ts"
+assets = { directory = "./build/client" }
+
+[[services]]
+binding = "API"
+service = "better-zmanim-api"
+
+[env.staging]
+name = "better-zmanim-web-staging"
+[[env.staging.services]]
+binding = "API"
+service = "better-zmanim-api-staging"
+
+[env.production]
+name = "better-zmanim-web"
+[[env.production.services]]
+binding = "API"
+service = "better-zmanim-api"

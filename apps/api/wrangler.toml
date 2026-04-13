@@ -2,9 +2,18 @@ name = "better-zmanim-api"
 main = "src/index.ts"
 compatibility_date = "2025-04-01"
 
-[vars]
-ENVIRONMENT = "production"
-
-[[kv_namespaces]]
+[env.staging]
+name = "better-zmanim-api-staging"
+[env.staging.vars]
+ENVIRONMENT = "staging"
+[[env.staging.kv_namespaces]]
 binding = "GEOCODE_CACHE"
-id = "TODO_REPLACE_WITH_KV_ID"
+id = "3daa6abed8e44164bff47119aabbe72f"
+
+[env.production]
+name = "better-zmanim-api"
+[env.production.vars]
+ENVIRONMENT = "production"
+[[env.production.kv_namespaces]]
+binding = "GEOCODE_CACHE"
+id = "19cd30cd4bd34bb682367f32c5613c8b"

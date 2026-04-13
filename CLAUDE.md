@@ -1,5 +1,5 @@
 # Project: Better Zmanim
-# Branch strategy: feature/* → develop → main
+# Branch strategy: develop (daily work) → PR to main (releases)
 
 ## Stack
 - Monorepo: pnpm workspaces + Turborepo
@@ -57,14 +57,14 @@
 - Havdalah uses the configured tzeis opinion
 
 ## Git Workflow
-- NEVER commit directly to main or develop
-- Branch naming: feature/[short-desc], fix/[short-desc]
+- Work directly on `develop` branch — no feature branches required
+- NEVER commit directly to main
 - Commit messages: conventional commits (feat:, fix:, chore:, docs:)
-- Always run /project:pre-pr before opening a PR
-- Squash merge to develop, merge commit to main
+- PR from `develop` to `main` for releases (run /project:pre-pr before opening)
+- Merge commit to main
 
 ## Forbidden
-- NEVER push to main or develop directly
+- NEVER push to main directly — always PR from develop
 - NEVER use `any` type
 - NEVER commit secrets, .env files, or API keys
 - NEVER use console.log — use a structured logger

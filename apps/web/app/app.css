@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  /* Apple Design System Colors */
+  --color-apple-blue: #0071e3;
+  --color-apple-blue-bright: #2997ff;
+  --color-apple-link: #0066cc;
+  --color-apple-black: #000000;
+  --color-apple-gray: #f5f5f7;
+  --color-apple-text: #1d1d1f;
+
+  /* Shadows */
+  --shadow-card: 3px 5px 30px 0px rgba(0, 0, 0, 0.22);
+
+  /* Font families */
+  --font-display: "SF Pro Display", "Heebo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: "SF Pro Text", "Heebo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}

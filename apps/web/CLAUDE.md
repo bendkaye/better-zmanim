@@ -1,13 +1,15 @@
 # Web Frontend Rules
 
-## This is the React PWA (Cloudflare Pages)
-- Uses React 19 + Vite + Tailwind CSS v4
-- PWA via vite-plugin-pwa (Workbox)
+## This is the React SSR app (Cloudflare Workers)
+- Uses React Router v7 (framework mode, SSR) + React 19 + Vite + Tailwind CSS v4
+- Server-rendered on Cloudflare Workers — every page is full HTML for SEO
+- API calls via Cloudflare Worker service binding to the Hono API worker
 - All shared hooks imported from @better-zmanim/shared
-- Web-specific hooks go in src/hooks/ (e.g., DOM event listeners, service worker registration)
+- Web-specific hooks go in src/hooks/ (e.g., DOM event listeners)
 - Styling: Tailwind utility classes only — no CSS modules, no styled-components
-- Dark mode: use Tailwind's `dark:` variant, toggled via class on <html>
-- Typography: Frank Ruhl Libre (Hebrew) + DM Sans (English) — loaded via Google Fonts
-- Color palette: slate-950 (bg), amber-400 (accent), defined in tailwind.config.ts
-- Geolocation: use browser navigator.geolocation API
-- Storage: localStorage for preferences (saved locations, opinion settings)
+- No dark mode toggle — design uses intentional black/light-gray section alternation
+- Typography: SF Pro Display/Text (Latin, system fallbacks) + Heebo (Hebrew, Google Fonts)
+- Design system: Apple-inspired, defined in DESIGN.md. Single accent: #0071e3 (Apple Blue)
+- Geolocation: Cloudflare IP headers for SSR, browser navigator.geolocation as fallback
+- Storage: cookies for preferences (language, last location) — must be server-readable
+- Full spec: docs/superpowers/specs/2026-04-13-web-ui-design.md
