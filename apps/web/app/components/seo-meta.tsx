@@ -16,21 +16,21 @@ export function buildMeta({ locationName, slug, zmanimResponse }: SeoInput) {
 
   const title = `Zmanim in ${locationName} — ${hebrewDate} ${year} | Better Zmanim`;
 
-  const sunrise = zmanim.find((z) => z.zmanId === "sunrise");
-  const sunriseStr = sunrise ? formatZmanTime(sunrise.time) : "";
+  const hanetz = zmanim.find((z) => z.zmanId === "hanetz");
+  const sunriseStr = hanetz ? formatZmanTime(hanetz.time) : "";
 
-  const candleLighting = dayInfo.candleLighting
+  const candleLightingZman = dayInfo.candleLighting
     ? zmanim.find((z) => z.zmanId === "candleLighting")
     : null;
-  const sunset = zmanim.find((z) => z.zmanId === "sunset");
-  const timeLabel = candleLighting
-    ? `Candle Lighting ${formatZmanTime(candleLighting.time)}`
-    : sunset
-      ? `Sunset ${formatZmanTime(sunset.time)}`
+  const shkia = zmanim.find((z) => z.zmanId === "shkia");
+  const timeLabel = candleLightingZman
+    ? `Candle Lighting ${formatZmanTime(candleLightingZman.time)}`
+    : shkia
+      ? `Sunset ${formatZmanTime(shkia.time)}`
       : "";
 
-  const holiday =
-    dayInfo.holidays.length > 0 ? dayInfo.holidays[0].names.en : "";
+  const firstHoliday = dayInfo.holidays[0];
+  const holiday = firstHoliday ? firstHoliday.names.en : "";
 
   const descParts = [
     `Jewish prayer times for ${locationName} today.`,
@@ -80,10 +80,8 @@ export function buildJsonLd({ locationName, slug, zmanimResponse }: SeoInput) {
       (z) => z.zmanId === "candleLighting",
     );
     if (candleLightingZman?.time) {
-      const holidayName =
-        dayInfo.holidays.length > 0
-          ? dayInfo.holidays[0].names.en
-          : "Shabbat";
+      const holidayEntry = dayInfo.holidays[0];
+      const holidayName = holidayEntry ? holidayEntry.names.en : "Shabbat";
 
       jsonLd.event = {
         "@type": "Event",

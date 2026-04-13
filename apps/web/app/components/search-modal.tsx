@@ -82,8 +82,9 @@ export function SearchModal({
         const response = await api.getGeocode({
           q: `${position.coords.latitude},${position.coords.longitude}`,
         });
-        if (response.data && response.data.results.length > 0) {
-          handleSelect(response.data.results[0]);
+        const firstResult = response.data?.results[0];
+        if (firstResult) {
+          handleSelect(firstResult);
         }
         setGeoLoading(false);
       },
