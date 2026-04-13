@@ -1,6 +1,6 @@
 // apps/api/src/lib/compute.ts
 import { ComplexZmanimCalendar, GeoLocation } from "kosher-zmanim";
-import momentTimezone from "moment-timezone";
+import { DateTime } from "luxon";
 import { ZMANIM } from "@better-zmanim/shared";
 import type { ZmanId, ZmanTimeResult } from "@better-zmanim/shared";
 
@@ -32,7 +32,7 @@ export function computeAllZmanim(input: ComputeInput): ZmanTimeResult[] {
   );
 
   const calendar = new ComplexZmanimCalendar(geoLocation);
-  calendar.setMoment(momentTimezone(date));
+  calendar.setDate(DateTime.fromJSDate(date, { zone: timeZone ?? "UTC" }));
   calendar.setCandleLightingOffset(candleLightingOffset ?? 18);
 
   const results: ZmanTimeResult[] = [];
@@ -46,8 +46,8 @@ export function computeAllZmanim(input: ComputeInput): ZmanTimeResult[] {
 
       let time: string | null = null;
       if (typeof method === "function") {
-        const result = (method as () => Date | null).call(calendar);
-        time = result ? result.toISOString() : null;
+        const result = (method as () => DateTime | null).call(calendar);
+        time = result ? result.toISO() : null;
       }
 
       results.push({ zmanId, opinionId, time });
